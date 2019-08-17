@@ -13,6 +13,7 @@ public class Rocket : MonoBehaviour
     private State state = State.Alive;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
+    private Light _thrustLight;
     [SerializeField] private AudioClip _mainEngine;
     [SerializeField] private AudioClip _success;
     [SerializeField] private AudioClip _death;
@@ -28,6 +29,7 @@ public class Rocket : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
+        _thrustLight = GetComponentInChildren<Light>();
     }
 
     /// <summary>
@@ -40,9 +42,35 @@ public class Rocket : MonoBehaviour
             RespondToThrustInput();
             RespondToRotateInput();
         }
+
+        if (Debug.isDebugBuild)
+        {
+            RespondToDebugInput();
+        }
     }
 
-    [SerializeField] float _mainThrust = 100f;
+    private bool _collisionsDisabled = false;
+    private void RespondToDebugInput()
+    {
+        if (Input.GetKey(KeyCode.L))
+        {
+            if (SceneManager.GetActiveScene().buildIndex == 0)
+            {
+                SceneManager.LoadScene(1);
+            }
+            else
+            {
+                SceneManager.LoadScene(0);
+            }
+        }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            _collisionsDisabled = !_collisionsDisabled;
+        }
+    }
+
+    [SerializeField] float _mainThrust = 150f;
     private void RespondToThrustInput()
     {
         if (Input.GetKey(KeyCode.W))
@@ -53,6 +81,7 @@ public class Rocket : MonoBehaviour
         {
             _audioSource.Stop();
             _mainEngineParticles.Stop();
+            _thrustLight.enabled = false;
         }
     }
 
@@ -69,26 +98,32 @@ public class Rocket : MonoBehaviour
         {
             _mainEngineParticles.Play();
         }
+
+        if (!_thrustLight.isActiveAndEnabled)
+        {
+            _thrustLight.enabled = true;
+        }
     }
 
-    [SerializeField] float _thrustForce = 1f;
+    [SerializeField] float _rotationForce = 2f;
     private void RespondToRotateInput()
     {
-        float rotationThisFrame = _thrustForce * Time.deltaTime;
+        float rotationThisFrame = _rotationForce * Time.deltaTime;
         _rigidbody.freezeRotation = true;
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward * _thrustForce);
+            transform.Rotate(Vector3.forward * _rotationForce);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(-Vector3.forward * _thrustForce);
+            transform.Rotate(-Vector3.forward * _rotationForce);
         }
 
         _rigidbody.freezeRotation = false;
     }
 
+    
     /// <summary>
     /// OnCollisionEnter is called when this collider/rigidbody has begun
     /// touching another rigidbody/collider.
@@ -96,7 +131,7 @@ public class Rocket : MonoBehaviour
     /// <param name="other">The Collision data associated with this collision.</param>
     void OnCollisionEnter(Collision other)
     {
-        if (state != State.Alive) { return; }
+        if (state != State.Alive || _collisionsDisabled) { return; }
 
         switch (other.gameObject.tag)
         {
