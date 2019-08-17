@@ -13,6 +13,12 @@ public class Rocket : MonoBehaviour
     private State state = State.Alive;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
+    [SerializeField] private AudioClip _mainEngine;
+    [SerializeField] private AudioClip _success;
+    [SerializeField] private AudioClip _death;
+    [SerializeField] private ParticleSystem _mainEngineParticles;
+    [SerializeField] private ParticleSystem _successParticles;
+    [SerializeField] private ParticleSystem _deathParticles;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -31,31 +37,42 @@ public class Rocket : MonoBehaviour
     {
         if (state == State.Alive)
         {
-            Thrust();
-            Rotate();
+            RespondToThrustInput();
+            RespondToRotateInput();
         }
     }
 
     [SerializeField] float _mainThrust = 100f;
-    private void Thrust()
+    private void RespondToThrustInput()
     {
         if (Input.GetKey(KeyCode.W))
         {
-            _rigidbody.AddRelativeForce(Vector3.up * _mainThrust * Time.deltaTime);
-
-            if (!_audioSource.isPlaying)
-            {
-                _audioSource.Play();
-            }
+            ApplyThrust();
         }
         else
         {
             _audioSource.Stop();
+            _mainEngineParticles.Stop();
+        }
+    }
+
+    private void ApplyThrust()
+    {
+        _rigidbody.AddRelativeForce(Vector3.up * _mainThrust * Time.deltaTime);
+
+        if (!_audioSource.isPlaying)
+        {
+            _audioSource.PlayOneShot(_mainEngine);
+        }
+
+        if (!_mainEngineParticles.isPlaying)
+        {
+            _mainEngineParticles.Play();
         }
     }
 
     [SerializeField] float _thrustForce = 1f;
-    private void Rotate()
+    private void RespondToRotateInput()
     {
         float rotationThisFrame = _thrustForce * Time.deltaTime;
         _rigidbody.freezeRotation = true;
@@ -86,14 +103,30 @@ public class Rocket : MonoBehaviour
             case "Friendly":
                 break;
             case "Finish":
-                state = State.Transition;
-                Invoke("LoadNextLvl", 1f);
+                StartSuccessSequence();
                 break;
             default:
-                state = State.Dying;
-                Invoke("LoadFirstLvl", 1f);
+                StartDeathSequence();
                 break;
         }
+    }
+
+    private void StartSuccessSequence()
+    {
+        state = State.Transition;
+        _audioSource.Stop();
+        _audioSource.PlayOneShot(_success);
+        _successParticles.Play();
+        Invoke("LoadNextLvl", 3f);
+    }
+
+    private void StartDeathSequence()
+    {
+        state = State.Dying;
+        _audioSource.Stop();
+        _audioSource.PlayOneShot(_death);
+        _deathParticles.Play();
+        Invoke("LoadFirstLvl", 3f);
     }
 
     private void LoadNextLvl()
