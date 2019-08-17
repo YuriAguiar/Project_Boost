@@ -111,13 +111,14 @@ public class Rocket : MonoBehaviour
         }
     }
 
+    [SerializeField] private float _lvlLoadDelay = 3f;
     private void StartSuccessSequence()
     {
         state = State.Transition;
         _audioSource.Stop();
         _audioSource.PlayOneShot(_success);
         _successParticles.Play();
-        Invoke("LoadNextLvl", 3f);
+        Invoke("LoadNextLvl", _lvlLoadDelay);
     }
 
     private void StartDeathSequence()
@@ -126,7 +127,7 @@ public class Rocket : MonoBehaviour
         _audioSource.Stop();
         _audioSource.PlayOneShot(_death);
         _deathParticles.Play();
-        Invoke("LoadFirstLvl", 3f);
+        Invoke("LoadFirstLvl", _lvlLoadDelay);
     }
 
     private void LoadNextLvl()
