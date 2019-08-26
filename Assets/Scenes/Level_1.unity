@@ -1262,7 +1262,7 @@ Transform:
   - {fileID: 1711820905}
   - {fileID: 912567563}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2016802003 stripped
 Transform:
@@ -1559,7 +1559,7 @@ PrefabInstance:
     - target: {fileID: 5884494324187491439, guid: 05dcd1a0d5c02b64a980bce1e56579f8,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5884494324187491439, guid: 05dcd1a0d5c02b64a980bce1e56579f8,
         type: 3}
@@ -1598,17 +1598,17 @@ PrefabInstance:
     - target: {fileID: 6789631798983031136, guid: 04a0afd5ebcbe2d4f9e8d1f1d28ef3d0,
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 1.05e-43
+      value: 1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 6789631798983031136, guid: 04a0afd5ebcbe2d4f9e8d1f1d28ef3d0,
         type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: 3.6e-44
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6789631798983031136, guid: 04a0afd5ebcbe2d4f9e8d1f1d28ef3d0,
         type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 1.561e-42
+      value: 1.8422e-40
       objectReference: {fileID: 0}
     - target: {fileID: 6789631798983031137, guid: 04a0afd5ebcbe2d4f9e8d1f1d28ef3d0,
         type: 3}
